@@ -9,7 +9,8 @@ let noCount = 0;
 let passwordAttempts = 0;
 let floatingHeartsInterval = null;
 let activeHearts = 0;
-const MAX_HEARTS = 3;
+const MAX_HEARTS = 3; // Minimal hearts to prevent lag
+const HEART_EMOJIS = ['💖', '💕', '💓', '❤️', '💗'];
 
 // ================= NO BUTTON MESSAGES =================
 const noMessages = [
@@ -39,7 +40,7 @@ const elements = {
   unlockBtn: document.getElementById("unlockBtn"),
   photoClick: document.getElementById("photoClick"),
   photoModal: document.getElementById("photoModal"),
-  zoomedPhoto: document.getElementById("zoomedPhoto"),
+  zoomedPhoto: document.getElementById("zoamedPhoto"),
   closeModal: document.getElementById("closeModal"),
   miniPlayer: document.getElementById("miniPlayer"),
   spotifyPlayer: document.getElementById("spotifyPlayer"),
@@ -101,13 +102,26 @@ function yesClicked() {
   elements.loveContent.style.display = "block";
   elements.loveContent.scrollIntoView({ behavior: "smooth" });
 
+  // Start initial celebrations
   startTyping();
   startSpotifyPlayer();
-  startMinimalFloatingHearts();
   
-  // Start celebrations
-  startConfetti();
-  startFireworks();
+  // Start celebrations with delays
+  setTimeout(() => {
+    startInitialCelebrationHearts(); // Initial burst of hearts
+  }, 300);
+  
+  setTimeout(() => {
+    startMinimalFloatingHearts(); // Constant minimal hearts
+  }, 2000);
+  
+  setTimeout(() => {
+    startConfetti();
+  }, 500);
+  
+  setTimeout(() => {
+    startFireworks();
+  }, 800);
 }
 
 // ================= PASSWORD =================
@@ -181,7 +195,6 @@ function startSpotifyPlayer() {
   elements.miniPlayer.classList.add("show");
 
   // ✅ FIXED: Spotify embed URL with correct parameters
-  // Using the format from Spotify's official embed generator
   elements.spotifyPlayer.src = 
     `https://open.spotify.com/embed/playlist/${SPOTIFY_PLAYLIST_ID}?utm_source=generator&theme=0&autoplay=1`;
 }
@@ -204,30 +217,93 @@ function startTyping() {
   }, 45);
 }
 
-// ================= FLOATING HEARTS =================
+// ================= MINIMAL CONSTANT FLOATING HEARTS =================
 function startMinimalFloatingHearts() {
-  if (floatingHeartsInterval) clearInterval(floatingHeartsInterval);
-
-  floatingHeartsInterval = setInterval(() => {
-    if (activeHearts >= MAX_HEARTS) return;
-
-    const heart = document.createElement("div");
-    heart.className = "floating-heart";
-    heart.textContent = ["💖", "💕", "💓"][Math.floor(Math.random() * 3)];
-    heart.style.left = Math.random() * 100 + "vw";
-    heart.style.fontSize = "22px";
-    heart.style.animationDuration = (10 + Math.random() * 5) + "s";
-
-    document.body.appendChild(heart);
-    activeHearts++;
-
+  // Clear any existing interval first
+  if (floatingHeartsInterval) {
+    clearInterval(floatingHeartsInterval);
+  }
+  
+  // Create 2-3 initial hearts
+  for (let i = 0; i < Math.min(3, MAX_HEARTS); i++) {
     setTimeout(() => {
-      if (heart.parentNode) {
-        heart.remove();
-        activeHearts--;
-      }
-    }, 15000);
-  }, 3000);
+      createFloatingHeart();
+    }, i * 1000);
+  }
+  
+  // Start interval to maintain constant hearts
+  floatingHeartsInterval = setInterval(() => {
+    // Only create new heart if we're below max
+    if (activeHearts < MAX_HEARTS) {
+      createFloatingHeart();
+    }
+  }, 4000); // Create new heart every 4 seconds
+}
+
+// Create a single floating heart
+function createFloatingHeart() {
+  if (activeHearts >= MAX_HEARTS) return;
+  
+  activeHearts++;
+  
+  const heart = document.createElement("div");
+  heart.className = "floating-heart";
+  
+  // Random heart emoji
+  heart.textContent = HEART_EMOJIS[Math.floor(Math.random() * HEART_EMOJIS.length)];
+  
+  // Random properties - very minimal
+  heart.style.left = Math.random() * 100 + "vw";
+  heart.style.fontSize = (20 + Math.random() * 15) + "px"; // 20-35px
+  heart.style.opacity = 0.1 + Math.random() * 0.1; // 0.1-0.2 opacity (very subtle)
+  heart.style.animationDuration = (15 + Math.random() * 10) + "s"; // 15-25 seconds (slow)
+  heart.style.filter = `hue-rotate(${Math.random() * 60}deg) brightness(${0.9 + Math.random() * 0.2})`;
+  
+  document.body.appendChild(heart);
+  
+  // Remove after animation completes
+  setTimeout(() => {
+    if (heart.parentNode) {
+      heart.remove();
+      activeHearts = Math.max(0, activeHearts - 1);
+    }
+  }, 25000); // Slightly longer than animation duration
+}
+
+// ================= INITIAL CELEBRATION HEARTS =================
+function startInitialCelebrationHearts() {
+  // Create 5-7 hearts that fall down (more than constant ones)
+  const celebrationHeartCount = 7;
+  
+  for (let i = 0; i < celebrationHeartCount; i++) {
+    setTimeout(() => {
+      createCelebrationHeart();
+    }, i * 200); // Stagger creation
+  }
+}
+
+function createCelebrationHeart() {
+  const heart = document.createElement("div");
+  heart.className = "floating-heart";
+  
+  // Random heart emoji
+  heart.textContent = HEART_EMOJIS[Math.floor(Math.random() * HEART_EMOJIS.length)];
+  
+  // Celebration hearts are slightly larger and faster
+  heart.style.left = Math.random() * 100 + "vw";
+  heart.style.fontSize = (25 + Math.random() * 20) + "px"; // 25-45px
+  heart.style.opacity = 0.15 + Math.random() * 0.15; // 0.15-0.3 opacity
+  heart.style.animationDuration = (8 + Math.random() * 7) + "s"; // 8-15 seconds (faster)
+  heart.style.filter = `hue-rotate(${Math.random() * 360}deg) brightness(${0.8 + Math.random() * 0.4})`;
+  
+  document.body.appendChild(heart);
+  
+  // Remove after animation
+  setTimeout(() => {
+    if (heart.parentNode) {
+      heart.remove();
+    }
+  }, 15000);
 }
 
 // ================= CONFETTI =================
@@ -235,19 +311,20 @@ function startConfetti() {
   const colors = ['#ff4d6d', '#ff6b8b', '#ff8fab'];
   const shapes = ['❤️', '💖', '💕'];
   
-  for (let i = 0; i < 75; i++) {
+  // Limited number for performance
+  for (let i = 0; i < 60; i++) {
     setTimeout(() => {
       const confetti = document.createElement('div');
       confetti.className = 'confetti';
       
       if (Math.random() > 0.5) {
         confetti.textContent = shapes[Math.floor(Math.random() * shapes.length)];
-        confetti.style.fontSize = (18 + Math.random() * 12) + 'px';
+        confetti.style.fontSize = (15 + Math.random() * 10) + 'px'; // Smaller
         confetti.style.color = colors[Math.floor(Math.random() * colors.length)];
       } else {
         confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
-        confetti.style.width = (6 + Math.random() * 6) + 'px';
-        confetti.style.height = (6 + Math.random() * 6) + 'px';
+        confetti.style.width = (5 + Math.random() * 5) + 'px'; // Smaller
+        confetti.style.height = (5 + Math.random() * 5) + 'px'; // Smaller
         confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
       }
       
@@ -260,7 +337,7 @@ function startConfetti() {
       setTimeout(() => {
         if (confetti.parentNode) confetti.remove();
       }, 5000);
-    }, i * 40);
+    }, i * 50); // Slower creation
   }
 }
 
@@ -272,19 +349,20 @@ function startPhotoConfetti() {
   const photoCard = document.getElementById('photoCard');
   const rect = photoCard.getBoundingClientRect();
   
-  for (let i = 0; i < 50; i++) {
+  // Even fewer for photo reveal
+  for (let i = 0; i < 40; i++) {
     setTimeout(() => {
       const confetti = document.createElement('div');
       confetti.className = 'photo-confetti';
       
       if (Math.random() > 0.5) {
         confetti.textContent = shapes[Math.floor(Math.random() * shapes.length)];
-        confetti.style.fontSize = (15 + Math.random() * 15) + 'px';
+        confetti.style.fontSize = (12 + Math.random() * 12) + 'px';
         confetti.style.color = colors[Math.floor(Math.random() * colors.length)];
       } else {
         confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
-        confetti.style.width = (8 + Math.random() * 8) + 'px';
-        confetti.style.height = (8 + Math.random() * 8) + 'px';
+        confetti.style.width = (6 + Math.random() * 6) + 'px';
+        confetti.style.height = (6 + Math.random() * 6) + 'px';
         confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
       }
       
@@ -297,24 +375,24 @@ function startPhotoConfetti() {
       setTimeout(() => {
         if (confetti.parentNode) confetti.remove();
       }, 4000);
-    }, i * 60);
+    }, i * 80); // Much slower creation
   }
 }
 
 // ================= FIREWORKS =================
 function startFireworks() {
-  const duration = 3000;
+  const duration = 2500; // Shorter duration
   const startTime = performance.now();
   let lastBurst = 0;
   let fireworkCount = 0;
-  const MAX_FIREWORKS = 30;
+  const MAX_FIREWORKS = 20; // Even fewer
 
   function createBurst() {
     if (fireworkCount >= MAX_FIREWORKS) return;
     
     const x = Math.random() * innerWidth;
     const y = Math.random() * innerHeight * 0.5;
-    const particles = 10;
+    const particles = 8; // Fewer particles
 
     for (let i = 0; i < particles; i++) {
       const p = document.createElement("div");
@@ -323,13 +401,13 @@ function startFireworks() {
       document.body.appendChild(p);
 
       let angle = Math.random() * Math.PI * 2;
-      let speed = Math.random() * 2 + 1;
+      let speed = Math.random() * 1.5 + 1; // Slower
       let px = x, py = y, life = 1;
 
       function animate() {
         px += Math.cos(angle) * speed;
         py += Math.sin(angle) * speed;
-        life -= 0.02;
+        life -= 0.015; // Slower fade
         p.style.transform = `translate(${px}px, ${py}px)`;
         p.style.opacity = life;
         if (life > 0) {
@@ -346,7 +424,7 @@ function startFireworks() {
 
   function loop(now) {
     if (now - startTime > duration) return;
-    if (now - lastBurst > 600 && fireworkCount < MAX_FIREWORKS) {
+    if (now - lastBurst > 800 && fireworkCount < MAX_FIREWORKS) { // Less frequent
       createBurst();
       lastBurst = now;
     }
@@ -355,6 +433,7 @@ function startFireworks() {
   requestAnimationFrame(loop);
 }
 
+// ================= PERFORMANCE OPTIMIZATION =================
 // Add shake animation to CSS
 const style = document.createElement('style');
 style.textContent = `
@@ -390,5 +469,26 @@ document.addEventListener('visibilitychange', function() {
       clearInterval(floatingHeartsInterval);
       floatingHeartsInterval = null;
     }
+  } else if (elements.loveContent.style.display !== 'none') {
+    // Restart hearts if love content is shown
+    setTimeout(() => {
+      startMinimalFloatingHearts();
+    }, 1000);
   }
 });
+
+// Auto-hide player when not in use
+let playerTimeout;
+function resetPlayerTimer() {
+  clearTimeout(playerTimeout);
+  if (elements.miniPlayer.classList.contains('show')) {
+    playerTimeout = setTimeout(() => {
+      elements.miniPlayer.style.opacity = '0.8';
+    }, 3000);
+  }
+}
+
+// Reset timer on interaction
+document.addEventListener('mousemove', resetPlayerTimer);
+document.addEventListener('touchstart', resetPlayerTimer);
+document.addEventListener('scroll', resetPlayerTimer);
