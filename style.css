@@ -7,6 +7,12 @@ html {
     box-sizing: inherit; 
 }
 
+/* CSS Variables for heart control */
+:root {
+    --heart-opacity: 0.15;
+    --heart-size: 20px;
+}
+
 body {
     margin: 0;
     min-height: 100vh;
@@ -68,15 +74,28 @@ body.night::before {
     color: rgba(255, 255, 255, 0.08);
 }
 
-/* Minimal floating hearts - only 3 at a time */
+/* ================= FLOATING HEARTS - UPDATED ================= */
 .floating-heart {
     position: fixed;
-    font-size: 20px;
-    opacity: 0.15;
+    font-size: var(--heart-size, 20px);
+    opacity: var(--heart-opacity, 0.15);
     z-index: 1;
     pointer-events: none;
-    animation: floatHeart 15s linear infinite;
+    animation: floatHeart linear infinite;
     filter: drop-shadow(1px 1px 2px rgba(0, 0, 0, 0.1));
+    will-change: transform, opacity;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+}
+
+/* Performance optimization for all animated elements */
+.floating-heart,
+.confetti,
+.firework,
+.photo-confetti {
+    will-change: transform, opacity;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
 }
 
 @keyframes floatHeart {
@@ -85,10 +104,10 @@ body.night::before {
         opacity: 0;
     }
     10% {
-        opacity: 0.15;
+        opacity: var(--heart-opacity, 0.15);
     }
     90% {
-        opacity: 0.15;
+        opacity: var(--heart-opacity, 0.15);
     }
     100% {
         transform: translateY(-100px) translateX(20px) rotate(20deg);
