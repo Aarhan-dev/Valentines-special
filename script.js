@@ -67,6 +67,13 @@ function setupEventListeners() {
 
   elements.photoClick.addEventListener("click", openPhotoModal);
   elements.closeModal.addEventListener("click", closePhotoModal);
+  
+  // Click outside modal to close
+  elements.photoModal.addEventListener("click", (e) => {
+    if (e.target === elements.photoModal) {
+      closePhotoModal();
+    }
+  });
 }
 
 // ================= NO CLICK =================
@@ -97,47 +104,90 @@ function yesClicked() {
   startTyping();
   startSpotifyPlayer();
   startMinimalFloatingHearts();
+  
+  // Start celebrations
+  startConfetti();
+  startFireworks();
 }
 
 // ================= PASSWORD =================
 function checkPassword() {
   if (elements.passwordInput.value === CORRECT_PASSWORD) {
-    elements.passwordContainer.style.display = "none";
-    elements.lockIcon.style.display = "none";
-    elements.hiddenPhoto.style.display = "block";
+    elements.passwordMessage.textContent = "🎉 Correct! Unlocking our special memory...";
+    elements.passwordMessage.style.color = "#ffccd5";
+    
+    // Add animation for unlock
+    setTimeout(() => {
+      elements.passwordContainer.style.opacity = "0";
+      elements.passwordContainer.style.transform = "translateY(-20px)";
+      
+      setTimeout(() => {
+        elements.passwordContainer.style.display = "none";
+        elements.lockIcon.style.display = "none";
+        elements.hiddenPhoto.style.display = "block";
 
-    // ✅ WORKING PINTEREST EMBED
-    elements.secretPhoto.src =
-      `https://assets.pinterest.com/ext/embed.html?id=${PINTEREST_PHOTO_ID}`;
+        // ✅ FIXED: Pinterest embed with proper parameters
+        const pinterestEmbed = `https://assets.pinterest.com/ext/embed.html?id=${PINTEREST_PHOTO_ID}&height=520&width=236`;
+        elements.secretPhoto.src = pinterestEmbed;
+        
+        // Add confetti celebration
+        startPhotoConfetti();
+        
+        // Smooth scroll to photo
+        setTimeout(() => {
+          elements.hiddenPhoto.scrollIntoView({ behavior: "smooth" });
+        }, 300);
+      }, 300);
+    }, 1000);
+    
+    passwordAttempts = 0;
   } else {
     passwordAttempts++;
-    elements.passwordMessage.textContent = "❌ Wrong password (DDMMYYYY)";
+    elements.passwordMessage.textContent = `❌ Wrong password (Hint: DDMMYYYY)`;
+    elements.passwordMessage.style.color = "#ff758f";
+    
+    // Shake animation
+    elements.passwordInput.style.animation = "shake 0.5s";
+    setTimeout(() => {
+      elements.passwordInput.style.animation = "";
+    }, 500);
+    
+    if (passwordAttempts >= 3) {
+      elements.passwordInput.value = "";
+    }
   }
 }
 
 // ================= PHOTO MODAL =================
 function openPhotoModal() {
-  elements.zoomedPhoto.src =
-    `https://assets.pinterest.com/ext/embed.html?id=${PINTEREST_PHOTO_ID}`;
+  // ✅ FIXED: Pinterest embed with proper parameters for modal
+  const pinterestEmbed = `https://assets.pinterest.com/ext/embed.html?id=${PINTEREST_PHOTO_ID}&height=600&width=300`;
+  elements.zoomedPhoto.src = pinterestEmbed;
   elements.photoModal.style.display = "flex";
+  document.body.style.overflow = "hidden";
 }
 
 function closePhotoModal() {
   elements.photoModal.style.display = "none";
-  elements.zoomedPhoto.src = "";
+  document.body.style.overflow = "auto";
+  
+  setTimeout(() => {
+    elements.zoomedPhoto.src = "";
+  }, 300);
 }
 
 // ================= SPOTIFY PLAYER =================
 function startSpotifyPlayer() {
   elements.miniPlayer.classList.add("show");
 
-  // ✅ WORKING SPOTIFY EMBED
-  elements.spotifyPlayer.src =
-    `https://open.spotify.com/embed/playlist/${SPOTIFY_PLAYLIST_ID}?autoplay=1`;
+  // ✅ FIXED: Spotify embed URL with correct parameters
+  // Using the format from Spotify's official embed generator
+  elements.spotifyPlayer.src = 
+    `https://open.spotify.com/embed/playlist/${SPOTIFY_PLAYLIST_ID}?utm_source=generator&theme=0&autoplay=1`;
 }
 
 // ================= TYPING EFFECT =================
-const typingText =
+const typingText = 
   "Hey my love 💕\nI made this just for you.\nBecause you mean everything to me 🫶";
 
 function startTyping() {
@@ -145,7 +195,12 @@ function startTyping() {
   elements.typingText.textContent = "";
   const interval = setInterval(() => {
     elements.typingText.textContent += typingText[i++];
-    if (i >= typingText.length) clearInterval(interval);
+    if (i >= typingText.length) {
+      clearInterval(interval);
+      setTimeout(() => {
+        elements.typingText.style.borderRight = "none";
+      }, 500);
+    }
   }, 45);
 }
 
@@ -161,13 +216,179 @@ function startMinimalFloatingHearts() {
     heart.textContent = ["💖", "💕", "💓"][Math.floor(Math.random() * 3)];
     heart.style.left = Math.random() * 100 + "vw";
     heart.style.fontSize = "22px";
+    heart.style.animationDuration = (10 + Math.random() * 5) + "s";
 
     document.body.appendChild(heart);
     activeHearts++;
 
     setTimeout(() => {
-      heart.remove();
-      activeHearts--;
-    }, 12000);
+      if (heart.parentNode) {
+        heart.remove();
+        activeHearts--;
+      }
+    }, 15000);
   }, 3000);
 }
+
+// ================= CONFETTI =================
+function startConfetti() {
+  const colors = ['#ff4d6d', '#ff6b8b', '#ff8fab'];
+  const shapes = ['❤️', '💖', '💕'];
+  
+  for (let i = 0; i < 75; i++) {
+    setTimeout(() => {
+      const confetti = document.createElement('div');
+      confetti.className = 'confetti';
+      
+      if (Math.random() > 0.5) {
+        confetti.textContent = shapes[Math.floor(Math.random() * shapes.length)];
+        confetti.style.fontSize = (18 + Math.random() * 12) + 'px';
+        confetti.style.color = colors[Math.floor(Math.random() * colors.length)];
+      } else {
+        confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+        confetti.style.width = (6 + Math.random() * 6) + 'px';
+        confetti.style.height = (6 + Math.random() * 6) + 'px';
+        confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+      }
+      
+      confetti.style.left = Math.random() * 100 + 'vw';
+      confetti.style.top = '-50px';
+      confetti.style.animationDuration = (2 + Math.random() * 2) + 's';
+      
+      document.body.appendChild(confetti);
+      
+      setTimeout(() => {
+        if (confetti.parentNode) confetti.remove();
+      }, 5000);
+    }, i * 40);
+  }
+}
+
+// ================= PHOTO CONFETTI =================
+function startPhotoConfetti() {
+  const colors = ['#ff4d6d', '#ff6b8b', '#ff8fab'];
+  const shapes = ['❤️', '💖', '💕'];
+  
+  const photoCard = document.getElementById('photoCard');
+  const rect = photoCard.getBoundingClientRect();
+  
+  for (let i = 0; i < 50; i++) {
+    setTimeout(() => {
+      const confetti = document.createElement('div');
+      confetti.className = 'photo-confetti';
+      
+      if (Math.random() > 0.5) {
+        confetti.textContent = shapes[Math.floor(Math.random() * shapes.length)];
+        confetti.style.fontSize = (15 + Math.random() * 15) + 'px';
+        confetti.style.color = colors[Math.floor(Math.random() * colors.length)];
+      } else {
+        confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+        confetti.style.width = (8 + Math.random() * 8) + 'px';
+        confetti.style.height = (8 + Math.random() * 8) + 'px';
+        confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+      }
+      
+      confetti.style.left = (rect.left + Math.random() * rect.width) + 'px';
+      confetti.style.top = (rect.top - 50) + 'px';
+      confetti.style.animationDuration = (1.5 + Math.random() * 2) + 's';
+      
+      document.body.appendChild(confetti);
+      
+      setTimeout(() => {
+        if (confetti.parentNode) confetti.remove();
+      }, 4000);
+    }, i * 60);
+  }
+}
+
+// ================= FIREWORKS =================
+function startFireworks() {
+  const duration = 3000;
+  const startTime = performance.now();
+  let lastBurst = 0;
+  let fireworkCount = 0;
+  const MAX_FIREWORKS = 30;
+
+  function createBurst() {
+    if (fireworkCount >= MAX_FIREWORKS) return;
+    
+    const x = Math.random() * innerWidth;
+    const y = Math.random() * innerHeight * 0.5;
+    const particles = 10;
+
+    for (let i = 0; i < particles; i++) {
+      const p = document.createElement("div");
+      p.className = "firework";
+      p.style.background = `hsl(${Math.random()*360},100%,70%)`;
+      document.body.appendChild(p);
+
+      let angle = Math.random() * Math.PI * 2;
+      let speed = Math.random() * 2 + 1;
+      let px = x, py = y, life = 1;
+
+      function animate() {
+        px += Math.cos(angle) * speed;
+        py += Math.sin(angle) * speed;
+        life -= 0.02;
+        p.style.transform = `translate(${px}px, ${py}px)`;
+        p.style.opacity = life;
+        if (life > 0) {
+          requestAnimationFrame(animate);
+        } else {
+          p.remove();
+          fireworkCount--;
+        }
+      }
+      fireworkCount++;
+      animate();
+    }
+  }
+
+  function loop(now) {
+    if (now - startTime > duration) return;
+    if (now - lastBurst > 600 && fireworkCount < MAX_FIREWORKS) {
+      createBurst();
+      lastBurst = now;
+    }
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+}
+
+// Add shake animation to CSS
+const style = document.createElement('style');
+style.textContent = `
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+    20%, 40%, 60%, 80% { transform: translateX(5px); }
+  }
+`;
+document.head.appendChild(style);
+
+// Player visibility on scroll
+let lastScrollTop = 0;
+window.addEventListener('scroll', function() {
+  if (!elements.miniPlayer.classList.contains('show')) return;
+  
+  let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+  
+  if (scrollTop > lastScrollTop) {
+    elements.miniPlayer.style.opacity = '0.7';
+    elements.miniPlayer.style.transform = 'translateX(-50%) translateY(-5px)';
+  } else {
+    elements.miniPlayer.style.opacity = '1';
+    elements.miniPlayer.style.transform = 'translateX(-50%) translateY(0)';
+  }
+  lastScrollTop = scrollTop;
+});
+
+// Clean up when page is hidden
+document.addEventListener('visibilitychange', function() {
+  if (document.hidden) {
+    if (floatingHeartsInterval) {
+      clearInterval(floatingHeartsInterval);
+      floatingHeartsInterval = null;
+    }
+  }
+});
