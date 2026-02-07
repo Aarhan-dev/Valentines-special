@@ -327,6 +327,7 @@ button:hover {
     border-radius: 20px;
     background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(10px);
+    transition: all 0.5s ease;
 }
 
 .password-input {
@@ -379,7 +380,7 @@ button:hover {
     font-style: italic;
 }
 
-/* Photo Frame */
+/* Photo Frame - Fixed for Pinterest embed */
 .photo-frame {
     position: relative;
     margin: 20px auto;
@@ -414,6 +415,10 @@ button:hover {
     position: relative;
     cursor: pointer;
     transition: transform 0.3s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.1);
 }
 
 .photo-container:hover {
@@ -421,9 +426,10 @@ button:hover {
 }
 
 .photo-container iframe {
-    width: 100%;
-    height: 100%;
+    width: 236px;
+    height: 520px;
     border: none;
+    border-radius: 10px;
 }
 
 /* Photo Modal */
@@ -434,8 +440,8 @@ button:hover {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.9);
-    z-index: 1000;
+    background: rgba(0, 0, 0, 0.95);
+    z-index: 2000;
     justify-content: center;
     align-items: center;
     animation: fadeIn 0.3s ease;
@@ -445,6 +451,18 @@ button:hover {
     max-width: 90%;
     max-height: 90%;
     animation: zoomIn 0.3s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.photo-modal-content iframe {
+    width: 300px;
+    height: 600px;
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
 }
 
 @keyframes zoomIn {
@@ -459,13 +477,21 @@ button:hover {
     color: white;
     font-size: 40px;
     cursor: pointer;
-    z-index: 1001;
+    z-index: 2001;
     transition: all 0.3s ease;
+    background: rgba(0, 0, 0, 0.5);
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .close-modal:hover {
     color: #ff4d6d;
     transform: scale(1.2);
+    background: rgba(0, 0, 0, 0.7);
 }
 
 /* Lock Icon */
@@ -473,6 +499,7 @@ button:hover {
     font-size: 3em;
     margin: 20px 0;
     animation: pulse 2s infinite;
+    transition: opacity 0.5s ease;
 }
 
 @keyframes pulse {
@@ -527,7 +554,7 @@ button:hover {
     }
 }
 
-/* Animations for wrong password */
+/* Animation Keyframes */
 @keyframes shake {
     0%, 100% { transform: translateX(0); }
     10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
@@ -550,10 +577,21 @@ button:hover {
     .photo-frame {
         padding: 15px;
         border-width: 10px;
+        max-width: 400px;
     }
     
     .photo-container {
-        height: 400px;
+        height: 450px;
+    }
+    
+    .photo-container iframe {
+        width: 200px;
+        height: 450px;
+    }
+    
+    .photo-modal-content iframe {
+        width: 250px;
+        height: 550px;
     }
 }
 
@@ -574,8 +612,22 @@ button:hover {
         line-height: 1.5;
     }
     
+    .photo-frame {
+        max-width: 350px;
+    }
+    
     .photo-container {
-        height: 350px;
+        height: 400px;
+    }
+    
+    .photo-container iframe {
+        width: 180px;
+        height: 400px;
+    }
+    
+    .photo-modal-content iframe {
+        width: 220px;
+        height: 500px;
     }
     
     h1 {
@@ -598,6 +650,7 @@ button:hover {
     
     .container {
         margin-top: 110px;
+        padding: 15px;
     }
     
     body::before {
@@ -606,8 +659,24 @@ button:hover {
         line-height: 1.3;
     }
     
+    .photo-frame {
+        max-width: 300px;
+        padding: 12px;
+        border-width: 8px;
+    }
+    
     .photo-container {
-        height: 300px;
+        height: 350px;
+    }
+    
+    .photo-container iframe {
+        width: 150px;
+        height: 350px;
+    }
+    
+    .photo-modal-content iframe {
+        width: 200px;
+        height: 450px;
     }
     
     button {
@@ -615,4 +684,27 @@ button:hover {
         min-width: 120px;
         font-size: 1em;
     }
+    
+    .close-modal {
+        top: 15px;
+        right: 20px;
+        font-size: 35px;
+        width: 45px;
+        height: 45px;
+    }
+}
+
+/* Loading state for Pinterest embed */
+.photo-container.loading::after {
+    content: "Loading...";
+    position: absolute;
+    color: white;
+    font-size: 1.2em;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+/* Fix for iframe pointer events */
+.photo-container iframe,
+.photo-modal-content iframe {
+    pointer-events: auto;
 }
