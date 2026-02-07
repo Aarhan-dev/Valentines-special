@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>For You 💖</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💖</text></svg>">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- iPhone Style Night Toggle -->
+<div class="toggle-container">
+    <span class="toggle-label">Night Mode</span>
+    <label class="toggle-switch">
+        <input type="checkbox" id="nightModeToggle">
+        <span class="toggle-slider"></span>
+    </label>
+</div>
+
+<!-- Photo Zoom Modal -->
+<div class="photo-modal" id="photoModal">
+    <span class="close-modal" id="closeModal">&times;</span>
+    <div class="photo-modal-content">
+        <iframe id="zoomedPhoto" 
+            src="" 
+            frameborder="0" 
+            scrolling="no"
+            allowfullscreen="">
+        </iframe>
+    </div>
+</div>
+
+<!-- 🎵 Mini Spotify Player -->
+<div class="mini-player" id="miniPlayer">
+    <iframe id="spotifyPlayer" 
+        src="" 
+        frameborder="0" 
+        allow="autoplay; encrypted-media;"
+        allowfullscreen="">
+    </iframe>
+</div>
+
+<div class="container">
+
+    <div id="questionScreen">
+        <h1>Hey Beautiful 💖</h1>
+        <p>I have something important to ask you 🥺</p>
+        <h2>Will you be my Valentine? 🌹</h2>
+
+        <div class="buttons">
+            <button id="yesBtn">YES 💖</button>
+            <button id="noBtn">NO 🙈</button>
+        </div>
+        <p id="noMsg"></p>
+    </div>
+
+    <div id="loveContent" style="display:none">
+
+        <h1>OHH HELLLL YEAHHHH 🥰</h1>
+
+        <div class="typing" id="typingText"></div>
+
+        <!-- 🎴 CARDS -->
+        <div class="cards">
+            <div class="section">
+                <h2>You Are Beautiful NAI 🌸✨</h2>
+                <p> Let me start off by appreciating your beauty
+                    I think thst you're the most beautiful woman in this whole wide world.  
+                    The way you smile, the way you talk, the way you just exist —  
+                    everything about you feels soft, warm, and perfect to me 🥹🌷  
+                    You bring so much happiness into my life. You're the best thing  
+                    that has ever happened to me. Words really can't describe your beauty.  
+                    The sparkle in your eyes, the warmth of your smile, the glow on your face,  
+                    the comfort in your hugs, your scent, your gorgeous hair —  
+                    built like a goddess. I am so in love with you NAISHU 💓 💓</p>
+            </div>
+
+            <div class="section">
+                <h2>How Much I Love You 💖</h2>
+                <p>I love you more than words can ever explain ❤️  
+                    I love the comfort you give me, the happiness you bring,  
+                    the way you make even small moments feel special.  
+                    I love how you calm me down when I'm stressed.  
+                    I love how you believe in me even when I don't.  
+                    I love how safe I feel with you.  
+                    Loving you comes so naturally to me ✨  
+                    I'm endlessly grateful for your love, your presence,  
+                    and for choosing me—every single day 💖</p>
+            </div>
+        </div>
+
+        <!-- PHOTO CARD -->
+        <div class="section" id="photoCard">
+            <h2>✨ Special Memory For You ✨</h2>
+            <div class="lock-icon">🔒</div>
+            <p>I have a special photo for you, but it's locked with a password.</p>
+            
+            <div class="password-container" id="passwordContainer">
+                <p>Hint: <span class="hint">Our anniversary date (DDMMYYYY)</span></p>
+                <input type="password" 
+                       class="password-input" 
+                       id="passwordInput" 
+                       placeholder="Enter the password...">
+                <div class="buttons">
+                    <button class="password-btn" id="unlockBtn">Unlock Photo 🔓</button>
+                </div>
+                <p id="passwordMessage" style="margin-top: 10px; color: #ffccd5;"></p>
+            </div>
+            
+            <!-- Hidden photo section -->
+            <div id="hiddenPhoto" style="display: none;">
+                <h3>💖 Our Special Memory 💖</h3>
+                <div class="photo-frame">
+                    <div class="photo-container" id="photoClick">
+                        <iframe id="secretPhoto" 
+                            src="" 
+                            frameborder="0" 
+                            scrolling="no">
+                        </iframe>
+                    </div>
+                </div>
+                <p style="margin-top: 15px; font-style: italic;">Click on the photo to view it larger 💕</p>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
