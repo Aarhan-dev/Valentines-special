@@ -35,6 +35,7 @@ body {
     transition: background 0.8s ease;
     -webkit-font-smoothing: antialiased;
     position: relative;
+    padding-bottom: 80px; /* Added padding for bottom toggle */
 }
 
 /* Static rose pattern background */
@@ -115,21 +116,23 @@ body.night::before {
     }
 }
 
-/* iPhone Style Night Toggle */
+/* ================= BED TIME TOGGLE - MOVED TO BOTTOM ================= */
 .toggle-container {
     position: fixed;
-    top: 20px;
-    right: 20px;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
     display: flex;
     align-items: center;
     gap: 10px;
     z-index: 100;
     background: rgba(255, 255, 255, 0.15);
     backdrop-filter: blur(10px);
-    padding: 8px 12px;
-    border-radius: 20px;
+    padding: 8px 16px;
+    border-radius: 25px;
     border: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
 }
 
 .toggle-label {
@@ -137,6 +140,7 @@ body.night::before {
     font-weight: 500;
     color: white;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    white-space: nowrap;
 }
 
 /* iPhone Style Switch */
@@ -612,12 +616,19 @@ button:hover {
         width: 250px;
         height: 550px;
     }
+    
+    /* Adjust toggle for tablet */
+    .toggle-container {
+        bottom: 15px;
+        padding: 6px 14px;
+    }
 }
 
 @media (max-width: 600px) {
     .container {
         margin-top: 120px;
         padding: 20px;
+        margin-bottom: 60px; /* Added space for bottom toggle */
     }
     
     .mini-player {
@@ -656,6 +667,17 @@ button:hover {
     h2 {
         font-size: 1.3em;
     }
+    
+    /* Adjust toggle for mobile */
+    .toggle-container {
+        bottom: 10px;
+        padding: 5px 12px;
+        gap: 8px;
+    }
+    
+    .toggle-label {
+        font-size: 13px;
+    }
 }
 
 @media (max-width: 400px) {
@@ -670,6 +692,7 @@ button:hover {
     .container {
         margin-top: 110px;
         padding: 15px;
+        margin-bottom: 50px; /* Added space for bottom toggle */
     }
     
     body::before {
@@ -711,6 +734,27 @@ button:hover {
         width: 45px;
         height: 45px;
     }
+    
+    /* Further adjust toggle for small phones */
+    .toggle-container {
+        bottom: 8px;
+        padding: 4px 10px;
+        border-radius: 20px;
+    }
+    
+    .toggle-switch {
+        width: 48px;
+        height: 28px;
+    }
+    
+    .toggle-slider:before {
+        height: 24px;
+        width: 24px;
+    }
+    
+    .toggle-switch input:checked + .toggle-slider:before {
+        transform: translateX(18px);
+    }
 }
 
 /* Loading state for Pinterest embed */
@@ -726,4 +770,9 @@ button:hover {
 .photo-container iframe,
 .photo-modal-content iframe {
     pointer-events: auto;
+}
+
+/* Hide toggle when photo modal is open */
+.photo-modal .toggle-container {
+    display: none;
 }
