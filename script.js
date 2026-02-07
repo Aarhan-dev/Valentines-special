@@ -197,7 +197,7 @@ function checkPassword() {
 
 // Open photo modal
 function openPhotoModal() {
-    elements.zoomedPhoto.src = `https://assets.pinterest.com/ext/embed.html?id=${PINTEREST_PHOTO_ID}`;
+    elements.zoomedPhoto.src = `https://assets.pinterest.com/ext/embed.html?id=${980307043905892776}`;
     elements.photoModal.style.display = "flex";
     document.body.style.overflow = "hidden";
 }
